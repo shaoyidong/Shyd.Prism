@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsAotCompatible>true</IsAotCompatible>
+    <!-- NuGet 包元数据 -->
+    <Version>1.0.0</Version>
+    <PackageId>Shyd.Prism.Avalonia</PackageId>
+    <Authors>Shyd</Authors>
+    <Description>仿 Prism 的精简 AOT Avalonia 层：DialogService（内容/窗口弹窗）、区域导航（Region/RegionManager）、XAML i18n 标记扩展（loc:Tr）、Toast 通知。</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/shaoyidong/Shyd.Prism</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.23" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shyd.Prism.Core\Shyd.Prism.Core.csproj" />
+  </ItemGroup>
+
+</Project>

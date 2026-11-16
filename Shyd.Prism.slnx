@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Shyd.Prism.Avalonia/Shyd.Prism.Avalonia.csproj" />
+    <Project Path="src/Shyd.Prism.Core/Shyd.Prism.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Shyd.Prism.Tests/Shyd.Prism.Tests.csproj" />
+  </Folder>
+</Solution>

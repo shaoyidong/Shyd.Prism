@@ -1,0 +1,22 @@
+## .NET
+bin/
+obj/
+out/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+
+## NuGet
+*.nupkg
+*.snupkg
+**/packages/
+
+## 测试
+TestResults/
+[Ll]ogs/
+
+## 其他
+Thumbs.db
+.DS_Store
