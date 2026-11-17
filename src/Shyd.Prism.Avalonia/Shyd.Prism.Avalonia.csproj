@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <IsAotCompatible>true</IsAotCompatible>
     <!-- NuGet 包元数据 -->
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <PackageId>Shyd.Prism.Avalonia</PackageId>
     <Authors>Shyd</Authors>
     <Description>仿 Prism 的精简 AOT Avalonia 层：DialogService（内容/窗口弹窗）、区域导航（Region/RegionManager）、XAML i18n 标记扩展（loc:Tr）、Toast 通知。</Description>

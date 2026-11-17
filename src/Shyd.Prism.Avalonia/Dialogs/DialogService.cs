@@ -173,9 +173,17 @@ public sealed class DialogService : IDialogService
         // 销毁平台实现（TopLevel.HandleClosed → PlatformImpl = null），本次手势仍会投递进来的
         // 原始输入事件（指针抬起、捕获释放等）找不到实现，Avalonia 就打
         // "PlatformImpl is null, couldn't handle input." 警告（见 Avalonia TopLevel.HandleInput）。
-        // 用 Background 优先级排到待处理 Input 之后：先排空输入再关窗（同 AboutWindow 失活关闭的 Post 延迟套路）。
+        // Post 到 Normal 优先级：当前输入事件已处理完，又不像 Background 那样在 UI 繁忙时
+        // 被长时间延后（表现为第一次点「关闭」没反应、要点两次）。
+        var closeRequested = false;
         vm.RequestClose += result =>
         {
+            if (closeRequested)
+            {
+                return;
+            }
+
+            closeRequested = true;
             delivered = result;
             Dispatcher.UIThread.Post(() =>
             {
@@ -183,7 +191,7 @@ public sealed class DialogService : IDialogService
                 {
                     window.Close(result);
                 }
-            }, DispatcherPriority.Background);
+            });
         };
 
         vm.OnDialogOpened(parameters ?? new DialogParameters());

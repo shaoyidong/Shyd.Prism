@@ -21,7 +21,7 @@ public interface IEventAggregator
 /// <inheritdoc />
 public sealed class EventAggregator : IEventAggregator
 {
-    private readonly object _gate = new();
+    private readonly Lock _gate = new();
     private readonly Dictionary<Type, List<Delegate>> _handlers = new();
 
     /// <inheritdoc />
