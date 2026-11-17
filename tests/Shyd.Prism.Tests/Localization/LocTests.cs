@@ -142,6 +142,28 @@ public class LocTests
     }
 
     [Fact]
+    public void SourceLanguage_IsConfigurable_KeysPassThroughUntranslated()
+    {
+        // 源语言由使用者声明：英文开发者声明 en 后，key 就是英文文本，
+        // 未翻译的 key 原样返回，未注册语言的回退目标也是声明的源语言
+        Loc.Initialize(_fixture.DataDirectory, _fixture.TestPacks, new SourceLanguage("en-US", "English (US)"));
+        try
+        {
+            Assert.Equal("en-US", Loc.SourceCode);
+
+            Loc.SetLanguage("not-a-language");
+            Assert.Equal("en-US", Loc.Language);
+
+            Assert.Equal("send file", Loc.Get("send file"));
+            Assert.Equal("send file (1/2)", Loc.F("send file ({0}/{1})", 1, 2));
+        }
+        finally
+        {
+            _fixture.Reset();
+        }
+    }
+
+    [Fact]
     public void Reinitialize_WithoutPacks_FallsBackToDataDirectoryFiles()
     {
         var previous = Loc.Language;

@@ -37,16 +37,19 @@ public sealed class LocalizationFixture : IDisposable
     public LocalizationFixture()
     {
         Directory.CreateDirectory(_dataDirectory);
-        Loc.Initialize(_dataDirectory, TestLanguagePacks.BuiltIn);
+        Loc.Initialize(_dataDirectory, TestLanguagePacks.BuiltIn, TestSourceLanguage);
     }
+
+    /// <summary>fixture 声明的源语言（测试 key 为中文，与 TestPacks 的 key 语言一致）。</summary>
+    public static SourceLanguage TestSourceLanguage { get; } = new("zh-CN", "简体中文");
 
     /// <summary>预载数据目录（fixture 存活期间不删除；测试篡改状态后用它恢复）。</summary>
     public string DataDirectory => _dataDirectory;
 
     public IReadOnlyList<BuiltInLanguagePack> TestPacks => TestLanguagePacks.BuiltIn;
 
-    /// <summary>把 Loc 恢复到 fixture 的预载状态（测试改了目录 / 语言后调用）。</summary>
-    public void Reset() => Loc.Initialize(_dataDirectory, TestLanguagePacks.BuiltIn);
+    /// <summary>把 Loc 恢复到 fixture 的预载状态（测试改了目录 / 语言 / 源语言后调用）。</summary>
+    public void Reset() => Loc.Initialize(_dataDirectory, TestLanguagePacks.BuiltIn, TestSourceLanguage);
 
     public void Dispose()
     {

@@ -6,10 +6,11 @@ using System;
 namespace Shyd.Prism.Notifications;
 
 /// <summary>
-/// 通知卡片窗口（无边框、置顶、点击回调）。
+/// 通知卡片窗口（无边框、置顶、点击回调），实现 <see cref="IToastWindow"/> 契约。
 /// 提示行文案由调用方传入（可经 i18n 翻译），框架不内置语言。
+/// 想换主题样式：继承 Window 实现该契约并注册到 ToastService 的 windowFactory。
 /// </summary>
-public partial class ToastWindow : Window
+public partial class ToastWindow : Window, IToastWindow
 {
     private readonly Action? _onClick;
     private bool _clickHandled;
