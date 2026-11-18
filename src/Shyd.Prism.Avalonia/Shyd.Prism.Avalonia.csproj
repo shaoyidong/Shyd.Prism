@@ -6,8 +6,11 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsAotCompatible>true</IsAotCompatible>
+    <!-- 框架自带 XAML 也必须走编译绑定：否则 {Binding} 会生成 ReflectionBindingExtension，
+         宿主做 Native AOT 发布时 ILC 会报 RequiresUnreferencedCode 警告（运行时可能被裁剪掉）。 -->
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <!-- NuGet 包元数据 -->
-    <Version>1.0.2</Version>
+    <Version>1.0.4</Version>
     <PackageId>Shyd.Prism.Avalonia</PackageId>
     <Authors>Shyd</Authors>
     <Description>仿 Prism 的精简 AOT Avalonia 层：DialogService（内容/窗口弹窗）、区域导航（Region/RegionManager）、XAML i18n 标记扩展（loc:Tr）、Toast 通知。</Description>

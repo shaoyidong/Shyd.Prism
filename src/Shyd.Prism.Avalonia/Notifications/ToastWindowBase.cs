@@ -69,6 +69,12 @@ public abstract class ToastWindowBase : Window, IToastWindow
     /// <summary>预览器 / 工厂用的无参构造。</summary>
     protected ToastWindowBase()
     {
+        // 子类的 XAML 用 {Binding ToastTitle}/{Binding ToastMessage}/{Binding ToastHint}
+        // 绑定本类规定的内容属性；Window 的 DataContext 默认是 null，不设为自身的话
+        // 这些绑定全部取不到值，表现就是「通知卡片弹出来了但内容一片空白」。
+        // 在基类构造里设好，框架内置 ToastWindow 与所有自定义子类一并生效。
+        DataContext = this;
+
         // 整卡点击 → OnClick → 延迟关窗（时序规避见 OnPointerReleased）
         PointerReleased += OnPointerReleased;
     }

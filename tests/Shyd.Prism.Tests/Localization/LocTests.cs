@@ -164,6 +164,20 @@ public class LocTests
     }
 
     [Fact]
+    public void DeclaringSourceLanguage_DoesNotLeaveDefaultEnglishPlaceholder()
+    {
+        // 回归：静态构造预注册的默认 en/English 占位包在宿主声明 zh-CN 后必须清掉，
+        // 否则语言下拉框会凭空多出一个空的 English（与真实的 en-US 包重复）。
+        // fixture 以 zh-CN 源语言 + en-US 文件包 Initialize，这里校验最终包列表干净。
+        Assert.DoesNotContain(Loc.Packs,
+            p => string.Equals(p.Code, "en", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(Loc.Packs,
+            p => string.Equals(p.Code, "zh-CN", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(Loc.Packs,
+            p => string.Equals(p.Code, "en-US", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public void Reinitialize_WithoutPacks_FallsBackToDataDirectoryFiles()
     {
         var previous = Loc.Language;

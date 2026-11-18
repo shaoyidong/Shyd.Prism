@@ -191,6 +191,20 @@ public static class LanguagePackLoader
         }
     }
 
+    /// <summary>
+    /// 只登记目录并扫描其中已有的语言包文件，不创建目录、不写入内置种子。
+    /// <para>供 Loc 的懒加载兜底使用：未显式 Initialize 时仍能读取程序基目录里已存在的 i18n，
+    /// 但不会因为一次普通的 Loc.Get/Packs 访问就在应用根目录凭空建出空目录。</para>
+    /// </summary>
+    /// <param name="dataDirectory">数据目录；为空时回退到程序基目录。</param>
+    public static void DiscoverExisting(string dataDirectory)
+    {
+        _packsDirectory = Path.Combine(
+            string.IsNullOrWhiteSpace(dataDirectory) ? AppContext.BaseDirectory : dataDirectory,
+            PackFolderName);
+        Reload();
+    }
+
     /// <summary>重新扫描语言包文件并注册；返回成功加载的文件数。</summary>
     public static int Reload()
     {

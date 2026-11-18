@@ -74,6 +74,20 @@ public static class Loc
     {
         var previousSourceCode = _source.Code;
         _source = source;
+
+        // 静态构造按框架默认源语言（en/English）预注册了一个空 Map 占位包，仅供
+        // "未显式声明源语言就调用 Loc.Get" 时兜底。宿主一旦声明了不同的源语言
+        // （如 zh-CN），这个占位包就失去意义；若留在 _packs 里，语言下拉框会凭空
+        // 多出一个空的 English，与真实的 en-US 语言包重复。
+        // 只移除确实是框架占位（SourceLanguagePack）的旧包，不动文件/宿主注入的真实包。
+        if (!string.Equals(previousSourceCode, source.Code, StringComparison.OrdinalIgnoreCase) &&
+            _byCode.TryGetValue(previousSourceCode, out var previousPack) &&
+            previousPack is SourceLanguagePack)
+        {
+            _packs.Remove(previousPack);
+            _byCode.Remove(previousSourceCode);
+        }
+
         Register(new SourceLanguagePack(source.Code, source.DisplayName));
 
         if (string.Equals(_current.Code, previousSourceCode, StringComparison.OrdinalIgnoreCase))
@@ -82,7 +96,11 @@ public static class Loc
         }
     }
 
-    /// <summary>懒加载语言包文件（未显式调用 Initialize 的场景也能正常工作，兜底目录为程序基目录、无内置种子）。</summary>
+    /// <summary>
+    /// 懒加载语言包文件（未显式调用 Initialize 的场景也能正常工作，兜底目录为程序基目录、无内置种子）。
+    /// <para>只扫描已存在的语言包文件，不创建目录：一次普通的 <see cref="Get"/>/<see cref="Packs"/>
+    /// 访问绝不该在应用根目录凭空留下一个空 i18n 文件夹（宿主真正的数据目录由 Initialize 指定）。</para>
+    /// </summary>
     private static void EnsurePacksLoaded()
     {
         if (_filePacksLoaded)
@@ -97,7 +115,7 @@ public static class Loc
                 return;
             }
 
-            LanguagePackLoader.Initialize(AppContext.BaseDirectory);
+            LanguagePackLoader.DiscoverExisting(AppContext.BaseDirectory);
             _filePacksLoaded = true;
         }
     }
