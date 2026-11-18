@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <IsAotCompatible>true</IsAotCompatible>
     <!-- NuGet 包元数据 -->
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <PackageId>Shyd.Prism.Core</PackageId>
     <Authors>Shyd</Authors>
     <Description>仿 Prism 的精简 AOT 框架基座（无 UI）：MVVM 基类、键值参数、事件聚合器、可热更 JSON 语言包 i18n 机制（内容由宿主注入）。</Description>

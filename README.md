@@ -71,26 +71,50 @@ regionManager.RequestNavigate("MainRegion", "History");
 regionManager.GoBack("MainRegion");
 ```
 
-### 5. i18n（中文作 key，内容归宿主）
+### 5. i18n（源语言由使用者声明，内容归宿主）
 
-框架只提供机制（JSON 语言包扫描、种子不覆盖用户文件、缺失 key 合并、热重载），**翻译内容由你的应用提供**：
+框架只提供机制（JSON 语言包扫描、种子不覆盖用户文件、缺失 key 合并、热重载），**源语言与翻译内容由你的应用声明**：
 
 ```csharp
-// 1) 应用工程放 Localization/packs/en-US.json（EmbeddedResource）
-//    {"code":"en-US","displayName":"English","translations":{"发送":"Send"}}
-// 2) 扫描自己的嵌入资源产出种子，初始化时注入
-Loc.Initialize(dataDirectory, MyAppLanguagePacks.BuiltIn);
+// 英文开发者：声明源语言为 en-US，代码里直接写 loc:Tr 'send file'（key 即源语言文本）
+// 中文开发者：声明 SourceLanguage("zh-CN", "简体中文")，写 loc:Tr '发送文件'
+Loc.Initialize(dataDirectory, MyAppLanguagePacks.BuiltIn,
+    new SourceLanguage("en-US", "English (US)"));
 ```
 
 ```xml
-<TextBlock Text="{loc:Tr '发送文件'}" />  <!-- xmlns:loc="using:Shyd.Prism.Localization" -->
+<TextBlock Text="{loc:Tr 'send file'}" />  <!-- xmlns:loc="using:Shyd.Prism.Localization" -->
 ```
+
+未翻译的 key 原样返回源语言原文；未注册语言回退到声明的源语言。
 
 ### 6. 事件聚合器
 
 ```csharp
 var subscription = events.Subscribe<MyEvent>(e => Handle(e));  // Dispose 退订
 events.Publish(new MyEvent());
+```
+
+### 7. 自定义 Toast 外观
+
+框架内置卡片是自包含样式；想让通知卡片符合你的主题，继承 `ToastWindowBase` 设计外观——
+内容注入（绑定 `ToastTitle` / `ToastMessage` / `ToastHint`）与点击行为（点卡片 → OnClick → 延迟关窗）全部由基类负责，子类零逻辑：
+
+```xml
+<!-- MyToastWindow.axaml：x:DataType="prism:ToastWindowBase"，绑定规定的内容字段 -->
+<TextBlock Text="{Binding ToastTitle}" />
+<TextBlock Text="{Binding ToastMessage}" />
+<TextBlock Text="{Binding ToastHint}" IsVisible="{Binding HasHint}" />
+```
+
+```csharp
+public partial class MyToastWindow : ToastWindowBase
+{
+    public MyToastWindow() { InitializeComponent(); }
+}
+
+// 注册
+services.AddSingleton<IToastService>(_ => new ToastService(ownerProvider, () => new MyToastWindow()));
 ```
 
 ## AOT 说明

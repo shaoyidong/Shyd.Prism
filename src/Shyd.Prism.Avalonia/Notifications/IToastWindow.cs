@@ -4,20 +4,23 @@ using Avalonia.Controls;
 namespace Shyd.Prism.Notifications;
 
 /// <summary>
-/// 通知窗口契约：<see cref="ToastService"/> 通过这些成员驱动通知窗口（定位、显示、关闭、二次布局校正）。
+/// 通知窗口契约：规定通知窗口必须能显示什么（<see cref="SetContent"/>），
+/// 以及 ToastService 驱动它所需的窗口操作（定位、显示、关闭）。
 /// <para>
-/// 这些成员都是 Avalonia Window 的标准成员，任何 Window 子类天然满足——
-/// 想让通知卡片符合自己的主题时，继承 Window 自绘样式（可绑定宿主资源 / 皮肤类），
-/// 并在注册 <see cref="IToastService"/> 时通过 <c>windowFactory</c> 提供自己的窗口：
-/// <code>
-/// services.AddSingleton&lt;IToastService&gt;(sp =&gt; new ToastService(ownerProvider,
-///     content =&gt; new MyThemedToastWindow(content)));
-/// </code>
-/// 不提供工厂时使用框架内置的 <see cref="ToastWindow"/>（自包含样式，不依赖宿主主题）。
+/// 一般不直接实现本接口，而是继承 <see cref="ToastWindowBase"/>：它已实现内容注入
+/// （Title / Message / Hint 可绑定属性）与点击行为（点卡片 → OnClick → 延迟关窗），
+/// 子类只需要 XAML 设计外观并绑定这些字段。实现本接口则完全自主。
 /// </para>
 /// </summary>
 public interface IToastWindow
 {
+    /// <summary>
+    /// 设置要显示的内容（ToastService 在显示前调用一次）：
+    /// <paramref name="content"/> 里的 <c>Title</c> / <c>Message</c> 必须展示，
+    /// <c>Hint</c> 可选（无内容时不显示提示行），<c>OnClick</c> 在用户点击通知时触发。
+    /// </summary>
+    void SetContent(ToastContent content);
+
     /// <summary>屏幕像素位置（ToastService 计算工作区右下角坐标后设置）。</summary>
     PixelPoint Position { get; set; }
 

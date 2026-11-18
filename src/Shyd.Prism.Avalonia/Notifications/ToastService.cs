@@ -12,7 +12,7 @@ public sealed class ToastService : IToastService, IDisposable
     private const int DefaultDurationMs = 6000;
 
     private readonly Func<Window?> _ownerProvider;
-    private readonly Func<ToastContent, IToastWindow> _windowFactory;
+    private readonly Func<IToastWindow> _windowFactory;
     private IToastWindow? _current;
     private DispatcherTimer? _timer;
 
@@ -20,12 +20,14 @@ public sealed class ToastService : IToastService, IDisposable
     /// <param name="ownerProvider">懒取默认 owner 窗口（解析发生在应用初始化之后）。</param>
     /// <param name="windowFactory">
     /// 创建通知窗口的工厂；null 时用框架自带的 <see cref="ToastWindow"/>（自包含样式）。
-    /// 想让通知卡片符合自己的主题：实现 <see cref="IToastWindow"/> 契约（继承 Window 即可）并在这里提供。
+    /// 想让通知卡片符合自己的主题：继承 <see cref="ToastWindowBase"/> 设计外观（绑定
+    /// ToastTitle / ToastMessage / ToastHint），这里提供 <c>() => new MyToastWindow()</c> 即可——
+    /// 内容注入与点击行为由基类负责。
     /// </param>
-    public ToastService(Func<Window?> ownerProvider, Func<ToastContent, IToastWindow>? windowFactory = null)
+    public ToastService(Func<Window?> ownerProvider, Func<IToastWindow>? windowFactory = null)
     {
         _ownerProvider = ownerProvider ?? throw new ArgumentNullException(nameof(ownerProvider));
-        _windowFactory = windowFactory ?? (content => new ToastWindow(content.Title, content.Message, content.Hint, content.OnClick));
+        _windowFactory = windowFactory ?? (() => new ToastWindow());
     }
 
     /// <inheritdoc />
@@ -47,7 +49,8 @@ public sealed class ToastService : IToastService, IDisposable
 
         CloseCurrent();
 
-        var toast = _windowFactory(new ToastContent(title, message, hint, onClick));
+        var toast = _windowFactory();
+        toast.SetContent(new ToastContent(title, message, hint, onClick));
         _current = toast;
 
         // 位置：主屏工作区右下角。主窗口隐藏到托盘时 PlatformImpl 可能已释放，

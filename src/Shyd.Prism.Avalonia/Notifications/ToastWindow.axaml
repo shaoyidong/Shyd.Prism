@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:DataType="notifications:ToastWindowBase"
+    xmlns:notifications="using:Shyd.Prism.Notifications"
     Width="360"
     SizeToContent="Height"
     CanResize="False"
@@ -15,7 +17,8 @@
     mc:Ignorable="d"
     WindowStartupLocation="Manual">
 
-    <!--  自包含样式：不依赖宿主应用的皮肤类，颜色/字号直接内联  -->
+    <!--  自包含样式：不依赖宿主应用的皮肤类，颜色/字号直接内联；
+         内容绑定基类规定的 ToastTitle / ToastMessage / ToastHint（逻辑全部在 ToastWindowBase）  -->
     <Border
         Padding="12"
         Background="#FFFFFF"
@@ -30,20 +33,20 @@
                 Background="#2F6FD0" />
             <StackPanel Grid.Column="1" Spacing="4">
                 <TextBlock
-                    x:Name="TitleText"
                     FontWeight="Bold"
-                    TextWrapping="Wrap" />
+                    TextWrapping="Wrap"
+                    Text="{Binding ToastTitle}" />
                 <TextBlock
-                    x:Name="MessageText"
                     FontSize="12"
                     Opacity="0.75"
                     MaxHeight="80"
-                    TextWrapping="Wrap" />
+                    TextWrapping="Wrap"
+                    Text="{Binding ToastMessage}" />
                 <TextBlock
-                    x:Name="HintText"
                     FontSize="12"
                     Opacity="0.75"
-                    IsVisible="False" />
+                    IsVisible="{Binding HasHint}"
+                    Text="{Binding ToastHint}" />
             </StackPanel>
         </Grid>
     </Border>
